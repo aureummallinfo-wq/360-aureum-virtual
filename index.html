@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121613">
+  <meta name="description" content="Explore Aureum Mall & Residences in an immersive 360 degree architectural concept tour. Look around and follow the markers between spaces.">
+  <title>Aureum — Explore the Spaces</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/vendor/pannellum/pannellum.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="assets/vendor/pannellum/pannellum.js"></script>
+  <script defer src="tour-data.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+<svg class="svg-definitions" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m14 5-7 7 7 7"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m10 5 7 7-7 7"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.2"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M5 13v7h14v-7"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M8 9H6v2m10-2h2v2M8 15H6v-2m10 2h2v-2"/></symbol>
+  <symbol id="i-motion" viewBox="0 0 24 24"><path d="m8 4-4 8 4 8m8-16 4 8-4 8M12 7v10"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8Z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 4v16M16 4v16"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></symbol>
+</defs></svg>
+<main id="viewer" class="viewer">
+  <div id="viewport" class="viewport" tabindex="0" role="region" aria-label="360 degree architectural concept panorama. Drag or use arrow keys to look around; select markers to change spaces.">
+    <div id="backdrop" class="backdrop" aria-hidden="true"></div>
+    <img id="scene-image" class="scene-image" alt="" draggable="false">
+    <div id="panorama" class="panorama" hidden></div>
+  </div>
+  <div class="vignette" aria-hidden="true"></div>
+  <header class="topbar chrome">
+    <button id="home" class="wordmark" aria-label="Aureum home, development overview"><span>AUREUM<span class="wordmark-dot">.</span></span><small>MALL &amp; RESIDENCES</small></button>
+    <div class="top-actions">
+      <button id="open-spaces" class="pill-button"><svg><use href="#i-grid"/></svg><span>Explore spaces</span></button>
+      <div class="top-divider"></div>
+      <button id="open-info" class="icon-button" aria-label="About this view" title="About this view"><svg><use href="#i-info"/></svg></button>
+      <button id="share" class="icon-button" aria-label="Share current view" title="Share current view"><svg><use href="#i-share"/></svg></button>
+      <button id="fullscreen" class="icon-button" aria-label="Enter fullscreen" title="Fullscreen (F)"><svg><use href="#i-expand"/></svg></button>
+    </div>
+  </header>
+  <div class="reference-mark chrome"><span class="status-dot"></span><span id="view-kind">ARCHITECT'S PERSPECTIVE</span></div>
+  <p class="concept-disclosure">Architectural concept · generated surroundings &amp; illustrative connections</p>
+  <div id="loading" class="loading" role="status"><div class="loader"></div><span>Opening the view</span></div>
+  <div id="load-error" class="load-error" hidden><p>This view couldn’t be loaded.</p><button id="retry" class="pill-button">Try again</button></div>
+  <div class="view-tools chrome" aria-label="View controls">
+    <button id="zoom-in" class="icon-button" aria-label="Zoom in" title="Zoom in (+)"><svg><use href="#i-plus"/></svg></button>
+    <button id="zoom-out" class="icon-button" aria-label="Zoom out" title="Zoom out (-)"><svg><use href="#i-minus"/></svg></button>
+    <span class="tool-divider"></span>
+    <button id="fit" class="icon-button" aria-label="Show full image" title="Show full image"><svg><use href="#i-fit"/></svg></button>
+    <button id="reset" class="icon-button" aria-label="Reset view" title="Reset view (0)"><svg><use href="#i-reset"/></svg></button>
+    <button id="motion" class="icon-button" aria-label="Turn pointer motion off" aria-pressed="true" title="Pointer motion"><svg><use href="#i-motion"/></svg></button>
+  </div>
+  <section class="scene-caption chrome" aria-label="Current view">
+    <div class="scene-heading"><p id="scene-category" class="eyebrow">EXTERIOR</p><h1 id="scene-title">Development overview</h1><p id="scene-subtitle" class="scene-subtitle">Street perspective · Day</p></div>
+    <div class="scene-navigation">
+      <button id="continue" class="continue-button"><span><small>NEXT SPACE</small><strong id="continue-label">Explore the mall</strong></span><svg><use href="#i-right"/></svg></button>
+      <button id="related" class="angle-button" hidden><span id="angle-count"></span><svg><use href="#i-right"/></svg></button>
+      <div class="navigation-row"><button id="previous" class="round-button" aria-label="Previous view"><svg><use href="#i-left"/></svg></button><span id="scene-counter" class="scene-counter">01 <span>/ 37</span></span><button id="next" class="round-button next-button" aria-label="Next view"><svg><use href="#i-right"/></svg></button></div>
+    </div>
+  </section>
+  <div id="gesture-hint" class="gesture-hint chrome">Move your mouse · drag to explore · scroll to zoom</div>
+  <footer id="filmstrip" class="filmstrip chrome">
+    <div class="filmstrip-top"><nav id="category-nav" class="category-nav" aria-label="Browse architectural areas"></nav><div class="filmstrip-actions"><button id="autoplay" class="text-button" aria-pressed="false"><svg><use href="#i-play"/></svg><span>Play tour</span></button><button id="hide-ui" class="icon-button" aria-label="Hide controls" title="Hide controls (H)"><svg><use href="#i-eye"/></svg></button></div></div>
+    <div id="thumbnails" class="thumbnails" role="list" aria-label="Architectural views"></div>
+  </footer>
+  <button id="show-ui" class="show-ui pill-button" hidden><svg><use href="#i-eye"/></svg>Show controls</button>
+  <div id="live-status" class="sr-only" role="status" aria-live="polite"></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+</main>
+
+<dialog id="spaces-dialog" class="spaces-dialog">
+  <div class="dialog-heading"><div><p class="eyebrow">THE ARCHITECTURAL COLLECTION</p><h2>Explore the spaces.</h2></div><button class="icon-button close-dialog" aria-label="Close space navigator"><svg><use href="#i-close"/></svg></button></div>
+  <label class="search-field"><svg><use href="#i-search"/></svg><input id="space-search" type="search" placeholder="Find a space or design…" aria-label="Search spaces"></label>
+  <div id="space-results" class="space-results"></div>
+  <p class="dialog-footnote">17 immersive concepts · based on the supplied architectural collection.<br>Design A and Design B are separate reference sets; apartment types and floor assignments are unverified.</p>
+  <details class="help"><summary>Building services &amp; location references</summary><p>Supporting graphics supplied with the architectural collection.</p><a class="support-link" href="assets/images/am-035.jpeg" target="_blank" rel="noopener">Power &amp; mechanical concept ↗</a><a class="support-link" href="assets/images/am-036.jpeg" target="_blank" rel="noopener">Security &amp; CCTV concept ↗</a><a class="support-link" href="assets/images/am-037.jpeg" target="_blank" rel="noopener">Location illustration ↗</a></details>
+</dialog>
+
+<dialog id="info-dialog" class="info-dialog">
+  <div class="dialog-heading"><div><p class="eyebrow">A CLOSER LOOK</p><h2 id="info-title">About this view</h2></div><button class="icon-button close-dialog" aria-label="Close view information"><svg><use href="#i-close"/></svg></button></div>
+  <p id="info-subtitle" class="info-subtitle"></p><p id="info-description"></p>
+  <div id="info-note" class="info-note"></div>
+  <dl id="info-details" class="info-details"></dl>
+  <div id="info-related" class="info-related"></div>
+  <details class="help"><summary>How to explore</summary><p>Drag or swipe to look around in every direction. Scroll or pinch to zoom. Click a floating marker or Next space to continue. The motion control enables gentle rotation and continuous mouse motion.</p><p><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> Look around<br><kbd>Page Up</kbd> / <kbd>Page Down</kbd> Previous / next space<br><kbd>+</kbd> <kbd>−</kbd> Zoom &nbsp; <kbd>0</kbd> Reset &nbsp; <kbd>F</kbd> Fullscreen &nbsp; <kbd>H</kbd> Hide controls</p><p>These AI-assisted 360° concepts extend the architects’ perspective images. Unseen geometry, furnishings and surroundings are illustrative. Connections describe a presentation route, with physical adjacency unverified. This is a spherical image tour; it is not a measured 3D building model or an approved floor plan.</p></details>
+</dialog>
+
+<dialog id="references-dialog" class="references-dialog">
+  <div class="dialog-heading"><div><p class="eyebrow">THE ARCHITECT’S DESIGN REFERENCES</p><h2>Design references.</h2></div><button class="icon-button close-dialog" aria-label="Close architectural references"><svg><use href="#i-close"/></svg></button></div>
+  <div id="reference-versions" class="reference-versions" hidden><button id="source-enhanced" class="pill-button" aria-pressed="true">Enhanced 4K</button><button id="source-original" class="pill-button" aria-pressed="false">Original</button></div>
+  <div class="reference-stage"><img id="reference-image" alt=""></div>
+  <div class="reference-bottom"><p id="reference-caption"></p><div class="navigation-row"><button id="source-previous" class="round-button" aria-label="Previous source image"><svg><use href="#i-left"/></svg></button><span id="reference-count"></span><button id="source-next" class="round-button" aria-label="Next source image"><svg><use href="#i-right"/></svg></button></div></div>
+  <p id="reference-provenance" class="dialog-footnote">Original supplied image. Compare this with the concept panorama; the generated surroundings are an interpretation of these references.</p>
+</dialog>
+
+<dialog id="share-dialog" class="share-dialog">
+  <div class="dialog-heading"><div><p class="eyebrow">SHARE THE PERSPECTIVE</p><h2>A link to this view.</h2></div><button class="icon-button close-dialog" aria-label="Close share dialog"><svg><use href="#i-close"/></svg></button></div>
+  <p>The link opens the currently selected view when the project is hosted.</p><input id="share-link" type="text" readonly aria-label="Current view link"><button id="copy-link" class="pill-button primary-button">Copy link</button><p id="share-note" class="dialog-footnote"></p>
+</dialog>
+<noscript><p class="noscript">Enable JavaScript to explore the Aureum image collection.</p></noscript>
+</body></html>
