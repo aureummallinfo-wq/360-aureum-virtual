@@ -97,8 +97,12 @@
     motion=value; syncMotionButton(); stopEdgeMotion();
     if(panorama) {if(value) panorama.startAutoRotate(-.7);else panorama.stopAutoRotate();}
   }
+  function initialPanoramaHfov() {
+    const mobile = rect.width < 620;
+    return clamp(Number(current.initialHfov?.[mobile ? 'mobile' : 'desktop']) || (mobile ? 75 : 100), 60, 120);
+  }
   function resetView() {
-    if (panorama) { panorama.lookAt(current.pitch || 0, current.yaw || 0, rect.width<620?75:100, reducedMotion?false:350); return; }
+    if (panorama) { panorama.lookAt(current.pitch || 0, current.yaw || 0, initialPanoramaHfov(), reducedMotion?false:350); return; }
     fit = current.initialFit === 'contain';
     target = {x:0, y:0, zoom:fit?1:1.06};
     position = {...target};
@@ -205,7 +209,7 @@
           button.append(ring,label);button.addEventListener('click',event=>{event.stopPropagation();openScene(h.target);});
           button.addEventListener('pointerdown',event=>event.stopPropagation());element.append(button);
         }}));
-        panorama=window.pannellum.viewer('panorama',{type:'equirectangular',panorama:current.image,autoLoad:true,showControls:false,escapeHTML:true,mouseZoom:true,keyboardZoom:false,disableKeyboardCtrl:true,hfov:rect.width<620?75:100,minHfov:60,maxHfov:120,yaw:current.yaw||0,pitch:current.pitch||0,autoRotate:motion?-.7:0,hotSpots:hotspots});
+        panorama=window.pannellum.viewer('panorama',{type:'equirectangular',panorama:current.image,autoLoad:true,showControls:false,escapeHTML:true,mouseZoom:true,keyboardZoom:false,disableKeyboardCtrl:true,hfov:initialPanoramaHfov(),minHfov:60,maxHfov:120,yaw:current.yaw||0,pitch:current.pitch||0,autoRotate:motion?-.7:0,hotSpots:hotspots});
         panorama.on('load',()=>{if(token===requestId) finishLoading();});
         panorama.on('error',()=>{if(token===requestId) showLoadError();});
       } else {
