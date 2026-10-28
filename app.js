@@ -28,6 +28,10 @@
   let velocity = {x:0,y:0};
   let sourceIndex = 0;
   let showEnhancedReference = false;
+  // 'render' opens each space on the architect's original image, which is far sharper than the concept
+  // panorama; '360' opens the look-around panorama. A shared link can ask for 360 with #mode=360.
+  let viewMode = new URLSearchParams(location.hash.slice(1)).get('mode') === '360' ? '360' : 'render';
+  let display = {width: 1, height: 1};
   function stopEdgeMotion() { cancelAnimationFrame(edgeFrame); edgeFrame=0; edgeTime=0; velocity={x:0,y:0}; }
   function edgeMotion(time) {
     if(!motion || !panorama || document.querySelector('dialog[open]')) {stopEdgeMotion();return;}
@@ -57,18 +61,20 @@
     return tour.scenes.filter(scene => activeCategory === 'all' || scene.category === activeCategory);
   }
   function currentGroup() { return tour.scenes.filter(scene => scene.group === current.group); }
+  function renderFor(scene) { return scene.type === 'equirectangular' && viewMode === 'render' ? scene.references?.[0] || null : null; }
+  function isFlat() { return current.type === 'flat' || !!renderFor(current); }
   function bounds(zoom = target.zoom) {
-    const base = (fit ? Math.min : Math.max)(rect.width/current.width, rect.height/current.height);
-    return {width: current.width*base*zoom, height: current.height*base*zoom,
-      x: Math.max(0, (current.width*base*zoom-rect.width)/2),
-      y: Math.max(0, (current.height*base*zoom-rect.height)/2)};
+    const base = (fit ? Math.min : Math.max)(rect.width/display.width, rect.height/display.height);
+    return {width: display.width*base*zoom, height: display.height*base*zoom,
+      x: Math.max(0, (display.width*base*zoom-rect.width)/2),
+      y: Math.max(0, (display.height*base*zoom-rect.height)/2)};
   }
   function scheduleRender() {
     if (!animationFrame) animationFrame = requestAnimationFrame(renderPosition);
   }
   function renderPosition() {
     animationFrame = 0;
-    if (current.type !== 'flat') return;
+    if (!isFlat()) return;
     const targetBounds = bounds();
     target.x = clamp(target.x, -targetBounds.x, targetBounds.x);
     target.y = clamp(target.y, -targetBounds.y, targetBounds.y);
@@ -117,7 +123,7 @@
     scheduleRender();
   }
   function updateFitButton() {
-    $('fit').disabled = current.type !== 'flat';
+    $('fit').disabled = !isFlat();
     $('fit').setAttribute('aria-label', fit ? 'Fill screen with image' : 'Show full image');
     $('fit').title = fit ? 'Fill screen with image' : 'Show full image';
   }
@@ -157,8 +163,16 @@
     $('scene-category').textContent = current.categoryTitle;
     $('scene-title').textContent = current.title;
     $('scene-subtitle').textContent = current.subtitle;
-    $('view-kind').textContent = current.type === 'equirectangular' ? (current.enhancement?'4K · ':'')+'CONCEPT 360° · ARTIST’S IMPRESSION' : "ARCHITECT'S PERSPECTIVE";
-    $('gesture-hint').textContent = coarsePointer ? 'Swipe to look around · tap a marker to change space' : 'Drag to look around · click a marker to explore the next space';
+    const render = renderFor(current);
+    $('view-kind').textContent = render ? 'ARCHITECT’S RENDER' : current.type === 'equirectangular' ? (current.enhancement?'4K · ':'')+'CONCEPT 360° · ARTIST’S IMPRESSION' : "ARCHITECT'S PERSPECTIVE";
+    $('gesture-hint').textContent = render
+      ? (coarsePointer ? 'Swipe to pan · tap Look around for the 360° view' : 'Drag to pan · scroll to zoom · Look around for the 360° view')
+      : (coarsePointer ? 'Swipe to look around · tap a marker to change space' : 'Drag to look around · click a marker to explore the next space');
+    const canSwitch = current.type === 'equirectangular' && !!current.references?.length;
+    $('mode-toggle').hidden = !canSwitch;
+    $('mode-label').textContent = render ? 'Look around in 360°' : 'Architect’s render';
+    $('mode-toggle').querySelector('use').setAttribute('href', render ? '#i-orbit' : '#i-image');
+    $('mode-toggle').setAttribute('aria-label', render ? 'Look around this space in 360 degrees' : 'Show the architect’s render of this space');
     const group = currentGroup();
     $('related').hidden = !current.references?.length;
     $('angle-count').textContent = 'Architect’s references';
@@ -169,7 +183,7 @@
     $('autoplay').disabled = visible.length < 2;
     document.title = `${current.title} — Aureum Mall & Residences`;
     viewport.dataset.scene = current.id;
-    viewport.dataset.renderMode = current.type;
+    viewport.dataset.renderMode = isFlat() ? 'flat' : current.type;
     updateInfo();
   }
   function preloadImage(url) {
@@ -202,9 +216,11 @@
     updateSelection();
     if (historyMode) writeUrlScene(historyMode);
     try {
-      const image=await preloadImage(current.image);
+      const render=renderFor(current);
+      const source=render ? render.image : current.image;
+      const image=await preloadImage(source);
       if (token!==requestId) return;
-      if (current.type==='equirectangular') {
+      if (!render && current.type==='equirectangular') {
         if (image.naturalWidth !== image.naturalHeight*2) throw new Error('A full 2:1 panorama is required');
         photo.hidden=true;
         $('panorama').hidden=false;
@@ -220,12 +236,10 @@
         panorama.on('load',()=>{if(token===requestId) finishLoading();});
         panorama.on('error',()=>{if(token===requestId) showLoadError();});
       } else {
-        if (image.naturalWidth!==current.width || image.naturalHeight!==current.height) {
-          current.width=image.naturalWidth; current.height=image.naturalHeight;
-        }
-        photo.src=current.image;
-        photo.alt=`${current.title}. ${current.subtitle}`;
-        $('backdrop').style.backgroundImage=`url("${current.image}")`;
+        display={width:image.naturalWidth, height:image.naturalHeight};
+        photo.src=source;
+        photo.alt=render ? `${current.title}. Architect’s render, ${render.title}.` : `${current.title}. ${current.subtitle}`;
+        $('backdrop').style.backgroundImage=`url("${source}")`;
         resetView();
         photo.classList.add('loaded');
         finishLoading();
@@ -233,7 +247,7 @@
       updateFitButton();
       const list=visibleScenes();
       const upcoming=list[(list.findIndex(s=>s.id===current.id)+1)%list.length];
-      if(upcoming && upcoming.id!==current.id) { const cached=new Image(); cached.src=upcoming.image; }
+      if(upcoming && upcoming.id!==current.id) { const cached=new Image(); cached.src=renderFor(upcoming)?.image || upcoming.image; }
     } catch { if(token===requestId) showLoadError(); }
   }
   function finishLoading() {
@@ -366,6 +380,11 @@
   $('previous').addEventListener('click',()=>step(-1));
   $('next').addEventListener('click',()=>step(1));
   $('continue').addEventListener('click',()=>openScene(current.next));
+  $('mode-toggle').addEventListener('click',()=>{
+    viewMode=viewMode==='render'?'360':'render';
+    openScene(current.id,{historyMode:null});
+    announce(viewMode==='render'?'Showing the architect’s render.':'Showing the 360° view. Drag to look around.');
+  });
   $('home').addEventListener('click',()=>{activeCategory='all';renderCategories();renderThumbnails();openScene(tour.defaultScene);});
   $('zoom-in').addEventListener('click',()=>zoomBy(1.2));
   $('zoom-out').addEventListener('click',()=>zoomBy(1/1.2));

@@ -87,3 +87,17 @@ dialog{color:var(--ink);background:#151e17;border:1px solid #566047;border-radiu
   .top-actions #open-spaces span{display:none}
   .top-actions #open-spaces{padding:8px 10px;min-height:36px}
 }
+
+/* Render / 360° switch (app.js viewMode). */
+/* Lives under the scene title, clear of the zoom tools and arrows on the right. */
+.mode-button{display:inline-flex;align-items:center;gap:10px;min-height:44px;margin-top:18px;padding:11px 18px;border:1px solid var(--gold);border-radius:30px;background:var(--gold);color:#1d2519;font-size:12px;font-weight:600;letter-spacing:.02em;box-shadow:0 8px 25px #0004;transition:background .2s,transform .2s;pointer-events:auto}
+.mode-button:hover{background:#f1dfba;transform:translateY(-1px)}
+.mode-button svg{width:18px;height:18px;stroke-width:1.7}
+.viewport[data-render-mode=flat] ~ .vignette{background:linear-gradient(180deg,#09100a99,transparent 26%,transparent 55%,#09100a40 72%,#09100ad9)}
+@media(max-width:620px){
+  .mode-button{margin-top:14px;min-height:40px;padding:9px 16px}
+}
+@media(max-height:560px){
+  .mode-button{margin-top:8px;min-height:32px;padding:6px 12px;font-size:11px;gap:7px}
+  .mode-button svg{width:15px;height:15px}
+}
