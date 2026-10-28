@@ -42,15 +42,17 @@
   <header class="topbar chrome">
     <button id="home" class="wordmark" aria-label="Aureum home, development overview"><span>AUREUM<span class="wordmark-dot">.</span></span><small>MALL &amp; RESIDENCES</small></button>
     <div class="top-actions">
-      <button id="open-spaces" class="pill-button"><svg><use href="#i-grid"/></svg><span>Explore spaces</span></button>
+      <button id="open-spaces" class="pill-button" aria-label="Explore spaces"><svg><use href="#i-grid"/></svg><span>Explore spaces</span></button>
       <div class="top-divider"></div>
       <button id="open-info" class="icon-button" aria-label="About this view" title="About this view"><svg><use href="#i-info"/></svg></button>
       <button id="share" class="icon-button" aria-label="Share current view" title="Share current view"><svg><use href="#i-share"/></svg></button>
       <button id="fullscreen" class="icon-button" aria-label="Enter fullscreen" title="Fullscreen (F)"><svg><use href="#i-expand"/></svg></button>
     </div>
   </header>
-  <div class="reference-mark chrome"><span class="status-dot"></span><span id="view-kind">ARCHITECT'S PERSPECTIVE</span></div>
-  <p class="concept-disclosure">Architectural concept · generated surroundings &amp; illustrative connections</p>
+  <div class="reference-block">
+    <div class="reference-mark chrome"><span class="status-dot"></span><span id="view-kind">ARCHITECT'S PERSPECTIVE</span></div>
+    <p class="concept-disclosure">Surroundings, furnishings &amp; connections are illustrative</p>
+  </div>
   <div id="loading" class="loading" role="status"><div class="loader"></div><span>Opening the view</span></div>
   <div id="load-error" class="load-error" hidden><p>This view couldn’t be loaded.</p><button id="retry" class="pill-button">Try again</button></div>
   <div class="view-tools chrome" aria-label="View controls">
@@ -66,7 +68,7 @@
     <div class="scene-navigation">
       <button id="continue" class="continue-button"><span><small>NEXT SPACE</small><strong id="continue-label">Explore the mall</strong></span><svg><use href="#i-right"/></svg></button>
       <button id="related" class="angle-button" hidden><span id="angle-count"></span><svg><use href="#i-right"/></svg></button>
-      <div class="navigation-row"><button id="previous" class="round-button" aria-label="Previous view"><svg><use href="#i-left"/></svg></button><span id="scene-counter" class="scene-counter">01 <span>/ 37</span></span><button id="next" class="round-button next-button" aria-label="Next view"><svg><use href="#i-right"/></svg></button></div>
+      <div class="navigation-row"><button id="previous" class="round-button" aria-label="Previous view"><svg><use href="#i-left"/></svg></button><span id="scene-counter" class="scene-counter">01 <span>/ 17</span></span><button id="next" class="round-button next-button" aria-label="Next view"><svg><use href="#i-right"/></svg></button></div>
     </div>
   </section>
   <div id="gesture-hint" class="gesture-hint chrome">Move your mouse · drag to explore · scroll to zoom</div>
@@ -93,15 +95,15 @@
   <div id="info-note" class="info-note"></div>
   <dl id="info-details" class="info-details"></dl>
   <div id="info-related" class="info-related"></div>
-  <details class="help"><summary>How to explore</summary><p>Drag or swipe to look around in every direction. Scroll or pinch to zoom. Click a floating marker or Next space to continue. The motion control enables gentle rotation and continuous mouse motion.</p><p><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> Look around<br><kbd>Page Up</kbd> / <kbd>Page Down</kbd> Previous / next space<br><kbd>+</kbd> <kbd>−</kbd> Zoom &nbsp; <kbd>0</kbd> Reset &nbsp; <kbd>F</kbd> Fullscreen &nbsp; <kbd>H</kbd> Hide controls</p><p>These AI-assisted 360° concepts extend the architects’ perspective images. Unseen geometry, furnishings and surroundings are illustrative. Connections describe a presentation route, with physical adjacency unverified. This is a spherical image tour; it is not a measured 3D building model or an approved floor plan.</p></details>
+  <details class="help"><summary>How to explore</summary><p>Drag or swipe to look around in every direction. Scroll or pinch to zoom. Click a floating marker or Next space to continue. The motion control enables gentle rotation and continuous mouse motion.</p><p><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> Look around<br><kbd>Page Up</kbd> / <kbd>Page Down</kbd> Previous / next space<br><kbd>+</kbd> <kbd>−</kbd> Zoom &nbsp; <kbd>0</kbd> Reset &nbsp; <kbd>F</kbd> Fullscreen &nbsp; <kbd>H</kbd> Hide controls</p><p>These 360° concept visualizations extend the architects’ perspective images. Unseen geometry, furnishings and surroundings are illustrative. Connections describe a presentation route, with physical adjacency unverified. This is a spherical image tour; it is not a measured 3D building model or an approved floor plan.</p></details>
 </dialog>
 
 <dialog id="references-dialog" class="references-dialog">
   <div class="dialog-heading"><div><p class="eyebrow">THE ARCHITECT’S DESIGN REFERENCES</p><h2>Design references.</h2></div><button class="icon-button close-dialog" aria-label="Close architectural references"><svg><use href="#i-close"/></svg></button></div>
-  <div id="reference-versions" class="reference-versions" hidden><button id="source-enhanced" class="pill-button" aria-pressed="true">Enhanced 4K</button><button id="source-original" class="pill-button" aria-pressed="false">Original</button></div>
+  <div id="reference-versions" class="reference-versions" hidden><button id="source-original" class="pill-button" aria-pressed="true">Original</button><button id="source-enhanced" class="pill-button" aria-pressed="false">4K</button></div>
   <div class="reference-stage"><img id="reference-image" alt=""></div>
   <div class="reference-bottom"><p id="reference-caption"></p><div class="navigation-row"><button id="source-previous" class="round-button" aria-label="Previous source image"><svg><use href="#i-left"/></svg></button><span id="reference-count"></span><button id="source-next" class="round-button" aria-label="Next source image"><svg><use href="#i-right"/></svg></button></div></div>
-  <p id="reference-provenance" class="dialog-footnote">Original supplied image. Compare this with the concept panorama; the generated surroundings are an interpretation of these references.</p>
+  <p id="reference-provenance" class="dialog-footnote">Original supplied image. Compare this with the concept panorama; its surroundings are an interpretation of these references.</p>
 </dialog>
 
 <dialog id="share-dialog" class="share-dialog">

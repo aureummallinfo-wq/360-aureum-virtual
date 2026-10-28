@@ -16,3 +16,74 @@ dialog{color:var(--ink);background:#151e17;border:1px solid #566047;border-radiu
 @media(max-height:550px) and (min-width:621px){.concept-disclosure{top:95px;left:23px;font-size:7px}.scene-heading h1{font-size:25px}.continue-button{padding:8px 12px;min-width:180px}.scene-navigation{gap:8px}.scene-caption{bottom:calc(var(--film-height) + 27px)}}
 @media(max-width:620px){.top-actions #open-info{display:inline-flex}.top-actions #share{display:none}}
 .reference-versions{display:flex;gap:8px;margin:0 0 15px}.reference-versions .pill-button{font-size:11px;min-height:35px;padding:8px 15px}.reference-versions .pill-button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#17251a}
+/* Label + disclosure share one positioned block so they stack instead of colliding. */
+.reference-block{position:absolute;top:109px;left:35px;z-index:3;display:grid;gap:8px;max-width:min(560px,calc(100% - 120px));pointer-events:none}
+.reference-block .reference-mark,.reference-block .concept-disclosure{position:static;max-width:none}
+.ui-hidden .reference-block{top:18px;left:18px}
+@media(min-width:1600px){.reference-block{top:126px;left:49px}}
+@media(max-width:1000px){.reference-block{top:102px;left:25px}}
+@media(max-width:620px){.reference-block{top:86px;left:19px;max-width:calc(100% - 80px);gap:6px}}
+@media(max-height:500px) and (min-width:621px){.reference-block{top:76px;left:23px}}
+
+/* Legibility: no text below 9px. */
+.reference-mark{font-size:10px;letter-spacing:.16em;flex-wrap:wrap}
+.concept-disclosure{font-size:11px;line-height:1.5;letter-spacing:.01em;color:#fff3d6e0}
+.eyebrow{font-size:10px}
+.wordmark small{font-size:9px}
+.scene-subtitle{font-size:13px}
+.gesture-hint{font-size:10px}
+.category-button{font-size:11px}
+.thumb span{font-size:10px}
+.continue-button small{font-size:9px}
+.continue-button strong{font-size:13px}
+.dialog-heading .eyebrow{font-size:9px}
+.dialog-footnote{font-size:11px}
+@media(max-width:1000px){.category-button{font-size:10px}}
+@media(max-width:620px){
+  .reference-mark{font-size:9px;letter-spacing:.1em}
+  .concept-disclosure{font-size:10px}
+  .wordmark small{font-size:7.5px}
+  .scene-heading .eyebrow,.dialog-heading .eyebrow{font-size:9px}
+  .scene-subtitle{font-size:11px}
+  .gesture-hint{font-size:9px}
+  .category-button{font-size:10px}
+  .thumb span{font-size:9px}
+  .continue-button small{font-size:8px}
+  .continue-button strong{font-size:12px}
+  .scene-counter{font-size:11px}
+  .scene-counter span{font-size:9px}
+}
+@media(max-width:400px){.top-actions #open-spaces span{display:none}.top-actions #open-spaces{padding:8px 10px}}
+
+/* Short screens (embedded boxes, landscape phones): drop the thumbnail strip and secondary controls
+   so the title, arrows and markers don't pile on top of each other. */
+@media(max-height:560px){
+  :root{--film-height:46px}
+  .thumbnails,.gesture-hint,.continue-button,.angle-button,.view-tools{display:none!important}
+  .filmstrip{padding:0 14px}
+  .filmstrip-top{height:46px}
+  .topbar{padding:14px 16px;align-items:center}
+  .wordmark>span{font-size:22px}
+  .wordmark small{font-size:7px;margin-top:5px}
+  .reference-block{top:62px;left:16px;gap:4px}
+  .reference-mark{font-size:8.5px;letter-spacing:.1em}
+  .concept-disclosure{font-size:9.5px}
+  .scene-caption{display:flex;flex-direction:row;align-items:flex-end;justify-content:space-between;left:16px;right:16px;bottom:calc(var(--film-height) + 14px);gap:12px}
+  .scene-heading{max-width:calc(100% - 140px);margin-bottom:0}
+  .scene-heading .eyebrow{font-size:8.5px;margin-bottom:5px}
+  .scene-heading h1{font-size:24px;max-width:none;margin-bottom:4px}
+  .scene-subtitle{font-size:10.5px;max-width:none}
+  .scene-navigation{flex-direction:row;align-items:center;flex-wrap:nowrap}
+  .scene-navigation .navigation-row{gap:8px}
+  .round-button{width:34px;height:34px;padding:8px}
+  .portal{min-width:100px;padding:8px;gap:6px}
+  .portal-ring{width:38px;height:38px}
+  .portal-label{font-size:10px;padding:6px 9px}
+}
+@media(max-height:560px) and (max-width:420px){
+  .scene-heading{max-width:calc(100% - 128px)}
+  .scene-heading h1{font-size:21px}
+  .scene-subtitle{display:none}
+  .top-actions #open-spaces span{display:none}
+  .top-actions #open-spaces{padding:8px 10px;min-height:36px}
+}

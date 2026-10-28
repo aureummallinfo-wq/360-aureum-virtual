@@ -2,11 +2,11 @@
 
 [Open the live tour](https://aureummallinfo-wq.github.io/360-aureum-virtual/)
 
-Interactive architectural concept tour with 17 spherical scenes, navigation hotspots, responsive controls and locally AI-enhanced imagery.
+Interactive architectural concept tour with 17 spherical scenes, navigation hotspots, responsive controls and upscaled 4K imagery.
 
-Panoramas are 3840 × 1920 pixels, retaining the 2:1 spherical projection. All 37 unique architectural references have a 3840-pixel long edge, with their original proportions preserved. The reference panel provides Enhanced 4K / Original comparison controls.
+Panoramas are 3840 × 1920 pixels, retaining the 2:1 spherical projection. All 37 unique architectural references have a 3840-pixel long edge, with their original proportions preserved. The reference panel provides Original / 4K comparison controls.
 
-Unseen surroundings and room connections are illustrative architectural concepts. These images are not measured floor plans or a survey of the building. Fine detail is inferred by the restoration model.
+Unseen surroundings and room connections are illustrative architectural concepts. These images are not measured floor plans or a survey of the building. Fine detail in the 4K images comes from upscaling.
 
 ## Publishing
 

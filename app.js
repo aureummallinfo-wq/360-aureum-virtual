@@ -27,7 +27,7 @@
   let edgeFrame = 0, edgeTime = 0;
   let velocity = {x:0,y:0};
   let sourceIndex = 0;
-  let showEnhancedReference = true;
+  let showEnhancedReference = false;
   function stopEdgeMotion() { cancelAnimationFrame(edgeFrame); edgeFrame=0; edgeTime=0; velocity={x:0,y:0}; }
   function edgeMotion(time) {
     if(!motion || !panorama || document.querySelector('dialog[open]')) {stopEdgeMotion();return;}
@@ -99,7 +99,14 @@
   }
   function initialPanoramaHfov() {
     const mobile = rect.width < 620;
-    return clamp(Number(current.initialHfov?.[mobile ? 'mobile' : 'desktop']) || (mobile ? 75 : 100), 60, 120);
+    return clamp(Number(current.initialHfov?.[mobile ? 'mobile' : 'desktop']) || (mobile ? 75 : 100), minPanoramaHfov(), 120);
+  }
+  // Narrowest field of view before the panorama is stretched past twice its own pixel density,
+  // which is where it visibly turns soft and blocky.
+  function minPanoramaHfov() {
+    const screenPixels = rect.width * (window.devicePixelRatio || 1);
+    const panoramaPixelsPerDegree = (current.width || 3840) / 360;
+    return clamp(Math.round(screenPixels / (panoramaPixelsPerDegree * 2)), 50, 100);
   }
   function resetView() {
     if (panorama) { panorama.lookAt(current.pitch || 0, current.yaw || 0, initialPanoramaHfov(), reducedMotion?false:350); return; }
@@ -116,7 +123,7 @@
   }
   function zoomBy(factor, origin) {
     pauseAutoplay();
-    if (panorama) { panorama.setHfov(clamp(panorama.getHfov()/factor,40,120), reducedMotion?false:150); return; }
+    if (panorama) { panorama.setHfov(clamp(panorama.getHfov()/factor,minPanoramaHfov(),120), reducedMotion?false:150); return; }
     const next = clamp(target.zoom*factor, 1, 4);
     const ratio = next/target.zoom;
     if (origin) {
@@ -150,7 +157,7 @@
     $('scene-category').textContent = current.categoryTitle;
     $('scene-title').textContent = current.title;
     $('scene-subtitle').textContent = current.subtitle;
-    $('view-kind').textContent = current.type === 'equirectangular' ? (current.enhancement?'4K · ':'')+'CONCEPT 360° · AI-ASSISTED VISUALIZATION' : "ARCHITECT'S PERSPECTIVE";
+    $('view-kind').textContent = current.type === 'equirectangular' ? (current.enhancement?'4K · ':'')+'CONCEPT 360° · ARTIST’S IMPRESSION' : "ARCHITECT'S PERSPECTIVE";
     $('gesture-hint').textContent = coarsePointer ? 'Swipe to look around · tap a marker to change space' : 'Drag to look around · click a marker to explore the next space';
     const group = currentGroup();
     $('related').hidden = !current.references?.length;
@@ -209,7 +216,7 @@
           button.append(ring,label);button.addEventListener('click',event=>{event.stopPropagation();openScene(h.target);});
           button.addEventListener('pointerdown',event=>event.stopPropagation());element.append(button);
         }}));
-        panorama=window.pannellum.viewer('panorama',{type:'equirectangular',panorama:current.image,autoLoad:true,showControls:false,escapeHTML:true,mouseZoom:true,keyboardZoom:false,disableKeyboardCtrl:true,hfov:initialPanoramaHfov(),minHfov:60,maxHfov:120,yaw:current.yaw||0,pitch:current.pitch||0,autoRotate:motion?-.7:0,hotSpots:hotspots});
+        panorama=window.pannellum.viewer('panorama',{type:'equirectangular',panorama:current.image,autoLoad:true,showControls:false,escapeHTML:true,mouseZoom:true,keyboardZoom:false,disableKeyboardCtrl:true,hfov:initialPanoramaHfov(),minHfov:minPanoramaHfov(),maxHfov:120,yaw:current.yaw||0,pitch:current.pitch||0,autoRotate:motion?-.7:0,hotSpots:hotspots});
         panorama.on('load',()=>{if(token===requestId) finishLoading();});
         panorama.on('error',()=>{if(token===requestId) showLoadError();});
       } else {
@@ -318,8 +325,8 @@
     $('info-subtitle').textContent=current.subtitle;
     $('info-description').textContent=current.description;
     $('info-note').textContent=current.note;
-    const data=[['Source references',current.sourceId],['Panorama',`${current.width} × ${current.height} px`],['Format','AI-assisted spherical concept'],['Connections','Illustrative tour sequence · physical adjacency unverified']];
-    if(current.enhancement)data.push(['Enhancement','Local AI super-resolution · original framing retained']);
+    const data=[['Source references',current.sourceId],['Panorama',`${current.width} × ${current.height} px`],['Format','360° concept visualization'],['Connections','Illustrative tour sequence · physical adjacency unverified']];
+    if(current.enhancement)data.push(['Resolution','4K upscale · original framing retained']);
     if(current.design) data.push(['Design set',`${current.design} · unit type unassigned`]);
     const list=$('info-details'); list.replaceChildren();
     data.forEach(([label,value])=>{const dt=document.createElement('dt');dt.textContent=label;const dd=document.createElement('dd');dd.textContent=value;list.append(dt,dd);});
@@ -374,11 +381,11 @@
     $('reference-versions').hidden=!source.enhancedImage;
     $('source-enhanced').setAttribute('aria-pressed',String(enhanced));
     $('source-original').setAttribute('aria-pressed',String(!enhanced));
-    $('reference-provenance').textContent=enhanced?'AI-enhanced copy of the supplied architect’s reference. Framing and proportions are retained. Choose Original to compare.':'Original supplied image. Compare this with the concept panorama; the generated surroundings are an interpretation of these references.';
+    $('reference-provenance').textContent=enhanced?'4K copy of the supplied architect’s reference. Framing and proportions are retained. Choose Original to compare.':'Original supplied image. Compare this with the concept panorama; its surroundings are an interpretation of these references.';
     $('reference-count').textContent=(sourceIndex+1)+' / '+current.references.length;
     $('source-previous').disabled=$('source-next').disabled=current.references.length<2;
   }
-  $('related').addEventListener('click',()=>{sourceIndex=0;showEnhancedReference=true;renderSource();openDialog('references-dialog');});
+  $('related').addEventListener('click',()=>{sourceIndex=0;showEnhancedReference=false;renderSource();openDialog('references-dialog');});
   $('source-enhanced').addEventListener('click',()=>{showEnhancedReference=true;renderSource();});
   $('source-original').addEventListener('click',()=>{showEnhancedReference=false;renderSource();});
   $('source-previous').addEventListener('click',()=>{sourceIndex=(sourceIndex-1+current.references.length)%current.references.length;renderSource();});
